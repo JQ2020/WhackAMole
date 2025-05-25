@@ -1,0 +1,73 @@
+@startuml
+
+title WhackAMole组件图
+
+' 设置样式
+skinparam component {
+  FontSize 12
+  BackgroundColor WhiteSmoke
+  ArrowColor DarkSlateGray
+  BorderColor Black
+}
+
+' 定义接口
+interface "用户交互" as UI
+interface "数据存储" as DataStorage
+interface "音效管理" as SoundInterface
+interface "游戏状态" as GameStateInterface
+
+' 定义组件
+component "UI 组件" as UIComponents {
+  component "MainActivity" as MainActivity
+  component "MainApp" as MainApp
+  component "GameScreen" as GameScreen
+  component "HistoryScreen" as HistoryScreen
+  component "GameOverDialog" as GameOverDialog
+  component "MoleHole" as MoleHole
+}
+
+component "业务逻辑" as BusinessLogic {
+  component "GameViewModel" as GameViewModel
+}
+
+component "数据管理" as DataManagement {
+  component "GameState" as GameState
+  component "ScoreRepository" as ScoreRepository
+}
+
+component "系统服务" as SystemServices {
+  component "SoundManager" as SoundManager
+  component "振动管理器" as VibratorManager
+}
+
+database "SharedPreferences" as SharedPrefs
+
+' 定义组件之间的关系
+UI -- UIComponents
+UIComponents ..> BusinessLogic : 调用
+BusinessLogic ..> DataManagement : 使用
+BusinessLogic ..> SystemServices : 使用
+DataStorage -- DataManagement
+DataManagement ..> SharedPrefs : 存储/读取
+SoundInterface -- SystemServices
+GameStateInterface -- BusinessLogic
+
+' 添加描述
+note right of UIComponents
+  处理用户界面显示和交互
+end note
+
+note right of BusinessLogic
+  负责游戏逻辑和状态管理
+end note
+
+note right of DataManagement
+  负责数据模型和持久化
+end note
+
+note right of SystemServices
+  提供系统级服务
+  (音效、震动等)
+end note
+
+@enduml 

@@ -1,0 +1,86 @@
+@startuml
+
+title WhackAMole包图
+
+' 设置样式
+skinparam {
+  PackageBackgroundColor WhiteSmoke
+  PackageBorderColor Black
+}
+
+package "com.example.myapplication" as rootPackage {
+  component "MainActivity" as MainActivity
+  
+  package "ui" as uiPackage {
+    component "MainApp" as MainApp
+    
+    package "screens" as screensPackage {
+      component "GameScreen" as GameScreen
+      component "HistoryScreen" as HistoryScreen
+    }
+    
+    package "components" as componentsPackage {
+      component "MoleHole" as MoleHole
+      component "GameOverDialog" as GameOverDialog
+    }
+    
+    package "theme" as themePackage {
+      component "AppTheme" as AppTheme
+    }
+  }
+  
+  package "viewmodel" as viewmodelPackage {
+    component "GameViewModel" as GameViewModel
+  }
+  
+  package "model" as modelPackage {
+    component "GameState" as GameState
+  }
+  
+  package "repository" as repositoryPackage {
+    component "ScoreRepository" as ScoreRepository
+  }
+  
+  package "util" as utilPackage {
+    component "SoundManager" as SoundManager
+  }
+}
+
+' 包之间的依赖关系
+rootPackage ..> uiPackage : 包含
+uiPackage ..> screensPackage : 包含
+uiPackage ..> componentsPackage : 包含
+uiPackage ..> themePackage : 包含
+
+screensPackage ..> viewmodelPackage : 使用
+screensPackage ..> componentsPackage : 使用
+viewmodelPackage ..> modelPackage : 使用
+viewmodelPackage ..> repositoryPackage : 使用
+viewmodelPackage ..> utilPackage : 使用
+
+' 添加说明
+note bottom of rootPackage
+  应用主包
+end note
+
+note right of uiPackage
+  包含所有UI相关组件
+end note
+
+note right of viewmodelPackage
+  包含视图模型
+end note
+
+note right of modelPackage
+  包含数据模型
+end note
+
+note right of repositoryPackage
+  包含数据仓库
+end note
+
+note right of utilPackage
+  包含实用工具类
+end note
+
+@enduml 

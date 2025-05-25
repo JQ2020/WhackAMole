@@ -1,0 +1,94 @@
+@startuml
+
+title WhackAMole序列图
+
+actor "用户" as User
+participant "MainActivity" as MainActivity
+participant "MainApp" as MainApp
+participant "GameScreen" as GameScreen
+participant "GameViewModel" as GameViewModel
+participant "ScoreRepository" as ScoreRepository
+participant "SoundManager" as SoundManager
+participant "MoleHole" as MoleHole
+
+== 启动应用 ==
+User -> MainActivity: 启动应用
+activate MainActivity
+MainActivity -> MainApp: 设置主界面
+activate MainApp
+MainApp -> GameViewModel: 创建 viewModel
+activate GameViewModel
+GameViewModel -> ScoreRepository: 创建 repository
+activate ScoreRepository
+GameViewModel -> SoundManager: 创建 soundManager
+activate SoundManager
+MainApp -> GameScreen: 显示游戏界面
+activate GameScreen
+GameScreen -> GameViewModel: 获取游戏状态
+GameScreen <-- GameViewModel: 返回初始状态
+GameScreen -> MoleHole: 创建9个地鼠洞
+activate MoleHole
+User <-- GameScreen: 显示游戏界面
+
+== 开始游戏 ==
+User -> GameScreen: 点击"开始游戏"按钮
+GameScreen -> GameViewModel: startGame()
+GameViewModel -> GameViewModel: 重置游戏状态
+GameViewModel -> GameViewModel: runGameTimer()
+loop 每秒更新
+    GameViewModel -> GameViewModel: 更新倒计时
+    GameViewModel -> GameViewModel: 随机更新地鼠位置
+    GameScreen <-- GameViewModel: 状态更新
+    GameScreen -> MoleHole: 更新地鼠显示状态
+    User <-- GameScreen: 显示更新后的游戏界面
+end
+
+== 击打地鼠 ==
+User -> MoleHole: 点击地鼠
+MoleHole -> GameScreen: 触发点击事件
+GameScreen -> GameViewModel: hitMole(position)
+alt 击中地鼠
+    GameViewModel -> SoundManager: playHitSound()
+    GameViewModel -> GameViewModel: 增加分数
+else 击空
+    GameViewModel -> SoundManager: playMissSound()
+    GameViewModel -> GameViewModel: 减少分数
+end
+GameScreen <-- GameViewModel: 状态更新
+User <-- GameScreen: 显示更新后的得分
+
+== 游戏结束 ==
+GameViewModel -> GameViewModel: 时间结束
+GameViewModel -> ScoreRepository: saveScore(score)
+GameViewModel -> GameViewModel: 显示结束对话框
+GameScreen <-- GameViewModel: 状态更新
+GameScreen -> GameScreen: 显示GameOverDialog
+User <-- GameScreen: 显示游戏结束对话框
+
+== 查看历史记录 ==
+User -> GameScreen: 点击"历史记录"按钮
+GameScreen -> GameViewModel: toggleHistory(true)
+GameViewModel -> MainApp: 状态更新
+MainApp -> HistoryScreen: 显示历史界面
+activate HistoryScreen
+HistoryScreen -> GameViewModel: getScoreHistory()
+GameViewModel -> ScoreRepository: getScoreHistory()
+HistoryScreen <-- ScoreRepository: 返回历史分数
+User <-- HistoryScreen: 显示历史记录界面
+
+== 返回游戏 ==
+User -> HistoryScreen: 点击"返回游戏"按钮
+HistoryScreen -> GameViewModel: toggleHistory(false)
+GameViewModel -> MainApp: 状态更新
+MainApp -> GameScreen: 显示游戏界面
+deactivate HistoryScreen
+User <-- GameScreen: 显示游戏界面
+
+== 重新开始游戏 ==
+User -> GameScreen: 点击"重新开始"按钮
+GameScreen -> GameViewModel: resetGame()
+GameViewModel -> GameViewModel: 重置游戏状态
+GameScreen <-- GameViewModel: 状态更新
+User <-- GameScreen: 显示重置后的游戏界面
+
+@enduml 

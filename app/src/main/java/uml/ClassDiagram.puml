@@ -1,0 +1,106 @@
+@startuml
+
+title WhackAMole类图
+
+package "com.example.myapplication" {
+  class MainActivity {
+    + onCreate(savedInstanceState: Bundle?)
+  }
+}
+
+package "com.example.myapplication.ui" {
+  class MainApp {
+    + MainApp()
+  }
+}
+
+package "com.example.myapplication.ui.screens" {
+  class GameScreen {
+    + GameScreen(viewModel: GameViewModel)
+  }
+  
+  class GameOverDialog {
+    + GameOverDialog(score: Int, onDismiss: () -> Unit, onReset: () -> Unit)
+  }
+  
+  class HistoryScreen {
+    + HistoryScreen(viewModel: GameViewModel, onBack: () -> Unit)
+  }
+}
+
+package "com.example.myapplication.ui.components" {
+  class MoleHole {
+    + MoleHole(isVisible: Boolean, onClick: () -> Unit)
+  }
+}
+
+package "com.example.myapplication.viewmodel" {
+  class GameViewModel {
+    - _gameState: MutableStateFlow<GameState>
+    - vibrator: Vibrator
+    - _showDialog: MutableState<Boolean>
+    - _showHistory: MutableState<Boolean>
+    + gameState: StateFlow<GameState>
+    + showDialog: State<Boolean>
+    + showHistory: State<Boolean>
+    + startGame()
+    - runGameTimer()
+    + hitMole(position: Int)
+    - endGame()
+    + dismissDialog()
+    + resetGame()
+    + toggleHistory(show: Boolean)
+    + getScoreHistory(): List<Int>
+  }
+  
+  class "GameViewModel.Factory" as GameViewModelFactory {
+    + create<T: ViewModel>(modelClass: Class<T>): T
+  }
+}
+
+package "com.example.myapplication.model" {
+  class GameState {
+    + score: Int
+    + timeLeft: Int
+    + isPlaying: Boolean
+    + molePositions: List<Boolean>
+  }
+}
+
+package "com.example.myapplication.repository" {
+  class ScoreRepository {
+    - PREFS_NAME: String
+    - KEY_HISTORY: String
+    + saveScore(score: Int)
+    + getScoreHistory(): List<Int>
+  }
+}
+
+package "com.example.myapplication.util" {
+  class SoundManager {
+    - soundPool: SoundPool
+    - hitSoundId: Int
+    - missSoundId: Int
+    + playHitSound()
+    + playMissSound()
+    + release()
+  }
+}
+
+' 关系定义
+MainActivity --> MainApp : 使用
+MainApp --> GameViewModel : 使用
+MainApp --> GameScreen : 显示
+MainApp --> HistoryScreen : 显示
+GameScreen --> GameViewModel : 引用
+GameScreen --> MoleHole : 包含
+GameScreen --> GameOverDialog : 显示
+HistoryScreen --> GameViewModel : 引用
+GameViewModel o-- GameState : 包含
+GameViewModel --> ScoreRepository : 使用
+GameViewModel --> SoundManager : 使用
+GameViewModelFactory ..> GameViewModel : 创建
+GameViewModelFactory ..> ScoreRepository : 创建
+GameViewModelFactory ..> SoundManager : 创建
+
+@enduml 

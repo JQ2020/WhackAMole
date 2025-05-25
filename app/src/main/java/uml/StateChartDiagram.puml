@@ -1,0 +1,36 @@
+@startuml
+
+title WhackAMole状态图
+
+[*] --> 准备状态
+
+state 准备状态 {
+  state "初始化界面" as init
+  state "显示开始游戏按钮" as showStartButton
+}
+
+state 游戏进行中 {
+  state "定时器运行中" as timerRunning
+  state "随机显示地鼠" as showRandomMoles
+  state "记录得分" as recordScore
+}
+
+state 游戏结束 {
+  state "显示最终得分" as showFinalScore
+  state "保存历史记录" as saveHistory
+  state "显示对话框" as showDialog
+}
+
+state "历史记录界面" as 历史记录界面 {
+  state "显示历史得分列表" as showHistoryList
+}
+
+准备状态 --> 游戏进行中 : 点击"开始游戏"按钮
+游戏进行中 --> 游戏进行中 : 击中地鼠 / 增加分数
+游戏进行中 --> 游戏进行中 : 击空 / 减少分数
+游戏进行中 --> 游戏结束 : 时间耗尽
+游戏结束 --> 准备状态 : 点击"重新开始"按钮
+准备状态 --> 历史记录界面 : 点击"历史记录"按钮
+历史记录界面 --> 准备状态 : 点击"返回游戏"按钮
+
+@enduml 

@@ -1,0 +1,74 @@
+@startuml
+
+title WhackAMole部署图
+
+' 设置样式
+skinparam {
+  BackgroundColor White
+  ArrowColor Black
+}
+
+' 设备节点
+node "Android设备" as AndroidDevice {
+  node "Android操作系统" as AndroidOS {
+    node "应用进程" as AppProcess {
+      component "打地鼠应用" as WhackAMoleApp {
+        component "UI层" as UILayer
+        component "业务逻辑层" as BusinessLayer
+        component "数据层" as DataLayer
+      }
+    }
+    
+    node "系统服务" as SystemServices {
+      component "音频服务" as AudioService
+      component "震动服务" as VibrationService
+      component "存储服务" as StorageService
+    }
+  }
+  
+  database "应用数据" as AppData {
+    component "SharedPreferences" as SharedPreferences
+    component "Assets" as Assets #LightBlue
+  }
+  
+  node "硬件" as Hardware {
+    component "屏幕" as Screen
+    component "扬声器" as Speaker
+    component "震动电机" as VibratorMotor
+    component "内部存储" as InternalStorage
+  }
+}
+
+' 组件之间的连接
+UILayer --> Screen : 显示
+BusinessLayer --> UILayer : 更新
+DataLayer --> BusinessLayer : 提供数据
+
+AudioService --> Speaker : 播放声音
+VibrationService --> VibratorMotor : 控制震动
+StorageService --> InternalStorage : 读写数据
+
+WhackAMoleApp --> AudioService : 使用
+WhackAMoleApp --> VibrationService : 使用
+WhackAMoleApp --> StorageService : 使用
+
+DataLayer --> SharedPreferences : 存储/读取
+WhackAMoleApp --> Assets : 加载资源
+
+' 添加说明
+note right of WhackAMoleApp
+  打地鼠游戏应用
+  - 使用Jetpack Compose构建UI
+  - MVVM架构
+  - 使用SharedPreferences存储数据
+end note
+
+note bottom of Hardware
+  设备硬件资源
+end note
+
+note bottom of SystemServices
+  Android系统服务
+end note
+
+@enduml 

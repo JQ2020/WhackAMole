@@ -1,0 +1,94 @@
+@startuml
+
+title WhackAMole架构图
+
+' 定义样式
+skinparam component {
+  BackgroundColor<<UI>> LightBlue
+  BackgroundColor<<ViewModel>> LightGreen
+  BackgroundColor<<Model>> LightYellow
+  BackgroundColor<<Repository>> Khaki
+  BackgroundColor<<Util>> LightGray
+}
+
+' 定义组件
+package "界面层 (UI)" {
+  [MainActivity] <<UI>>
+  [MainApp] <<UI>>
+  
+  package "Screens" {
+    [GameScreen] <<UI>>
+    [HistoryScreen] <<UI>>
+  }
+  
+  package "Components" {
+    [MoleHole] <<UI>>
+    [GameOverDialog] <<UI>>
+  }
+}
+
+package "视图模型层 (ViewModel)" {
+  [GameViewModel] <<ViewModel>>
+}
+
+package "数据层 (Model)" {
+  [GameState] <<Model>>
+}
+
+package "仓库层 (Repository)" {
+  [ScoreRepository] <<Repository>>
+  [SharedPreferences] <<Repository>>
+}
+
+package "工具层 (Util)" {
+  [SoundManager] <<Util>>
+}
+
+' 定义关系
+[MainActivity] --> [MainApp]
+[MainApp] --> [GameScreen]
+[MainApp] --> [HistoryScreen]
+[GameScreen] --> [MoleHole]
+[GameScreen] --> [GameOverDialog]
+[GameScreen] --> [GameViewModel]
+[HistoryScreen] --> [GameViewModel]
+
+[GameViewModel] --> [GameState]
+[GameViewModel] --> [ScoreRepository]
+[GameViewModel] --> [SoundManager]
+
+[ScoreRepository] --> [SharedPreferences]
+
+' 添加架构分层
+rectangle "表现层" {
+  [表现层\n(Presentation)] #LightBlue
+}
+
+rectangle "业务逻辑层" {
+  [业务逻辑层\n(Business Logic)] #LightGreen
+}
+
+rectangle "数据层" {
+  [数据层\n(Data)] #LightYellow
+}
+
+' 架构层级关系
+[表现层\n(Presentation)] --> [业务逻辑层\n(Business Logic)]
+[业务逻辑层\n(Business Logic)] --> [数据层\n(Data)]
+
+note bottom of [表现层\n(Presentation)]
+  包含UI组件和用户交互
+  (MainActivity, MainApp, GameScreen等)
+end note
+
+note bottom of [业务逻辑层\n(Business Logic)]
+  包含应用核心逻辑
+  (GameViewModel)
+end note
+
+note bottom of [数据层\n(Data)]
+  包含数据模型和持久化
+  (GameState, ScoreRepository等)
+end note
+
+@enduml 
