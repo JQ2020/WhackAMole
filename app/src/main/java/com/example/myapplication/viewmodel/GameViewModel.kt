@@ -147,7 +147,7 @@ class GameViewModel(
      * 获取历史分数
      */
     fun getScoreHistory(): List<Int> {
-        return scoreRepository.getScoreHistory()
+        return scoreRepository.getScoreHistory().sortedDescending()
     }
     
     /**
