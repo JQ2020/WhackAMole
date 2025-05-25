@@ -284,13 +284,15 @@ private fun GameGrid(
                         val index = row * 3 + col
                         
                         // 为每个洞添加动画效果
-                        var currentVisibility by remember(index, molePositions[index]) {
+                        var currentVisibility by remember(index, molePositions[index], isPlaying) {
                             mutableStateOf(false)
                         }
                         
-                        LaunchedEffect(index, molePositions[index]) {
+                        LaunchedEffect(index, molePositions[index], isPlaying) {
                             if (isPlaying) {
                                 currentVisibility = molePositions[index]
+                            } else {
+                                currentVisibility = false
                             }
                         }
                         
@@ -345,13 +347,13 @@ private fun GameControls(
                 .widthIn(min = 200.dp)
         ) {
             Icon(
-                imageVector = if (score == 0) Icons.Default.PlayArrow else Icons.Default.Refresh,
-                contentDescription = if (score == 0) "开始游戏" else "重新开始",
+                imageVector = if (!isPlaying) Icons.Default.PlayArrow else Icons.Default.Refresh,
+                contentDescription = if (!isPlaying) "开始游戏" else "重新开始",
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = if (score == 0) "开始游戏" else "重新开始",
+                text = if (!isPlaying) "开始游戏" else "重新开始",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
