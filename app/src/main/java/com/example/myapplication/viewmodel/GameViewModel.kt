@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 class GameViewModel(
-    private val context: Context,
+    context: Context,
     private val scoreRepository: ScoreRepository,
     private val soundManager: SoundManager
 ) : ViewModel() {
