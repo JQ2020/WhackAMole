@@ -41,17 +41,19 @@ fun GameScreen(viewModel: GameViewModel) {
     }
     
     LaunchedEffect(gameState.score) {
-        scoreAnimation.animateTo(
-            targetValue = 1f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow
+        if (gameState.score > 0) {  // 只在分数大于0时执行动画
+            scoreAnimation.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
             )
-        )
-        scoreAnimation.animateTo(
-            targetValue = 0f,
-            animationSpec = tween(150)
-        )
+            scoreAnimation.animateTo(
+                targetValue = 0f,
+                animationSpec = tween(150)
+            )
+        }
     }
     
     // 计时器动画
@@ -181,7 +183,7 @@ private fun GameInfoCard(
             // 分数显示
             Text(
                 text = "$score",
-                fontSize = 36.sp * scoreScale,
+                fontSize = 36.sp * (if (score > 0) scoreScale else 1f),
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 16.dp)
