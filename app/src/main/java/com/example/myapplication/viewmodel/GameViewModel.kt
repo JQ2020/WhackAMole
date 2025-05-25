@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.model.GameState
 import com.example.myapplication.repository.ScoreRepository
 import com.example.myapplication.util.SoundManager
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,11 +37,20 @@ class GameViewModel(
     private val _showHistory = mutableStateOf(false)
     val showHistory: State<Boolean> = _showHistory
     
+    // 计时器任务
+    private var timerJob: Job? = null
+    
     /**
      * 开始游戏
      */
     fun startGame() {
+        // 取消之前的计时器任务
+        timerJob?.cancel()
+        
+        // 重置游戏状态
         _gameState.value = GameState(isPlaying = true)
+        
+        // 启动新的计时器
         runGameTimer()
     }
     
@@ -48,7 +58,8 @@ class GameViewModel(
      * 游戏计时器
      */
     private fun runGameTimer() {
-        viewModelScope.launch {
+        // 存储计时器任务引用
+        timerJob = viewModelScope.launch {
             while (_gameState.value.timeLeft > 0 && _gameState.value.isPlaying) {
                 delay(1000)
                 _gameState.value = _gameState.value.copy(
@@ -97,6 +108,10 @@ class GameViewModel(
      * 结束游戏
      */
     private fun endGame() {
+        // 取消计时器
+        timerJob?.cancel()
+        timerJob = null
+        
         _gameState.value = _gameState.value.copy(isPlaying = false)
         scoreRepository.saveScore(_gameState.value.score)
         _showDialog.value = true
@@ -113,6 +128,10 @@ class GameViewModel(
      * 重置游戏
      */
     fun resetGame() {
+        // 取消计时器
+        timerJob?.cancel()
+        timerJob = null
+        
         _gameState.value = GameState(isPlaying = false)
         _showDialog.value = false
     }
@@ -129,6 +148,16 @@ class GameViewModel(
      */
     fun getScoreHistory(): List<Int> {
         return scoreRepository.getScoreHistory()
+    }
+    
+    /**
+     * ViewModel 销毁时清理资源
+     */
+    override fun onCleared() {
+        super.onCleared()
+        // 取消计时器
+        timerJob?.cancel()
+        timerJob = null
     }
     
     /**
