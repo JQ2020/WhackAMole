@@ -230,7 +230,7 @@ private fun ScoreHistoryList(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
-            itemsIndexed(history.reversed()) { index, score ->
+            itemsIndexed(history) { index, score ->
                 val isTopThree = index < 3
                 val animDelay = index * 50L
                 
