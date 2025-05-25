@@ -266,11 +266,13 @@ private fun GameGrid(
             .padding(16.dp)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
             for (row in 0..2) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     for (col in 0..2) {
                         val index = row * 3 + col
@@ -288,7 +290,9 @@ private fun GameGrid(
                         
                         Box(
                             modifier = Modifier
-                                .size(90.dp)
+                                .weight(1f)
+                                .aspectRatio(1f)
+                                .padding(4.dp)
                                 .shadow(2.dp, CircleShape)
                         ) {
                             MoleHole(
