@@ -209,39 +209,43 @@ private fun GameInfoCard(
                 trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
             )
             
-            // 时间图标
-            if (isPlaying) {
-                Row(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    val infiniteTransition = rememberInfiniteTransition(label = "timer")
-                    val alpha by infiniteTransition.animateFloat(
-                        initialValue = 0.4f,
-                        targetValue = 1f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(500),
-                            repeatMode = RepeatMode.Reverse
-                        ),
-                        label = "timerAlpha"
-                    )
-                    
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "计时器",
-                        tint = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "游戏进行中",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = alpha)
-                    )
-                }
+            // 游戏状态显示
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val infiniteTransition = rememberInfiniteTransition(label = "timer")
+                val alpha by infiniteTransition.animateFloat(
+                    initialValue = 0.4f,
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(500),
+                        repeatMode = RepeatMode.Reverse
+                    ),
+                    label = "timerAlpha"
+                )
+                
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "状态",
+                    tint = if (isPlaying) 
+                        MaterialTheme.colorScheme.primary.copy(alpha = alpha)
+                    else 
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = if (isPlaying) "游戏进行中" else "游戏未开始",
+                    fontSize = 12.sp,
+                    color = if (isPlaying)
+                        MaterialTheme.colorScheme.primary.copy(alpha = alpha)
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
             }
         }
     }
