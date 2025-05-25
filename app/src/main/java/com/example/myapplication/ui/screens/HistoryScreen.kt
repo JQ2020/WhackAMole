@@ -14,7 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -137,7 +137,7 @@ private fun TopAppBar(
             
             // 历史记录图标
             Icon(
-                imageVector = Icons.Default.EmojiEvents,
+                imageVector = Icons.Default.Star,
                 contentDescription = "历史记录",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(32.dp)
@@ -315,7 +315,7 @@ private fun ScoreItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (isTopThree) {
                     Icon(
-                        imageVector = Icons.Default.EmojiEvents,
+                        imageVector = Icons.Default.Star,
                         contentDescription = "奖杯",
                         tint = rankColor,
                         modifier = Modifier
